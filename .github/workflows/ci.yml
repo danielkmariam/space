@@ -55,6 +55,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
+    - name: display
+      run: echo ${GITHUB_SHA::12}
     - name: Install dependencies
       run: composer install --prefer-dist --no-progress
     - name: Docker login
