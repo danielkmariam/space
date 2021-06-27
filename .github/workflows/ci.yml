@@ -1,4 +1,4 @@
-name: PHP Composer
+name: Composer
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     branches: [ main ]
 
 jobs:
-  composer:
+  build:
 
     runs-on: ubuntu-latest
 
