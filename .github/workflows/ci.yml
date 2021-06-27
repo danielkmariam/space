@@ -65,9 +65,9 @@ jobs:
       run: docker build -t space .
     - name: Tags
       run: |
-        docker tag space ${{ secrets.DOCKER_USERNAME }}/space:${{ github.sha }}
+        docker tag space ${{ secrets.DOCKER_USERNAME }}/space:${GITHUB_SHA::8}
         docker tag space ${{ secrets.DOCKER_USERNAME }}/space:latest
     - name: Push
       run: |
-        docker push ${{ secrets.DOCKER_USERNAME }}/space:${{ github.sha }}
+        docker push ${{ secrets.DOCKER_USERNAME }}/space:${GITHUB_SHA::8}
         docker push ${{ secrets.DOCKER_USERNAME }}/space:latest
