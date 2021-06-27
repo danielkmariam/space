@@ -1,4 +1,4 @@
-name: Composer
+name: CI
 
 on:
   push:
@@ -28,6 +28,7 @@ jobs:
 
     - name: Install dependencies
       run: composer install --prefer-dist --no-progress
+  
   tests:
 
     runs-on: ubuntu-latest
@@ -42,4 +43,18 @@ jobs:
       uses: php-actions/phpunit@v3
       with:
         configuration: phpunit.xml.dist
+        memory_limit: 256M
+  phpstan:
+
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Install dependencies
+      run: composer install --prefer-dist --no-progress
+
+    - name: Static analysis
+      uses: php-actions/phpstan@v2
+      with:
+        configuration: phpstan.neon
         memory_limit: 256M
