@@ -53,8 +53,6 @@ jobs:
 
   cd:
     runs-on: ubuntu-latest
-    env:
-      GITHUB_SHA8: ${{ github.sha::8}}
     steps:
     - uses: actions/checkout@v2
     - name: Install dependencies
@@ -65,9 +63,9 @@ jobs:
       run: docker build -t space .
     - name: Tags
       run: |
-        docker tag space ${{ secrets.DOCKER_USERNAME }}/space:$GITHUB_SHA8
+        docker tag space ${{ secrets.DOCKER_USERNAME }}/space:${{ github.sha }}
         docker tag space ${{ secrets.DOCKER_USERNAME }}/space:latest
     - name: Push
       run: |
-        docker push ${{ secrets.DOCKER_USERNAME }}/space:$GITHUB_SHA8
+        docker push ${{ secrets.DOCKER_USERNAME }}/space:${{ github.sha }}
         docker push ${{ secrets.DOCKER_USERNAME }}/space:latest
