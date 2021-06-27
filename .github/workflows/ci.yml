@@ -56,6 +56,6 @@ jobs:
     - name: Static analysis
       uses: php-actions/phpstan@v2
       with:
-        command: vendor/bin/phpstan analyse src tests 
+        command: analyse src tests 
         configuration: phpstan.neon
         memory_limit: 256M
