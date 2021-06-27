@@ -17,7 +17,7 @@ class HelloController extends AbstractController
     public function index(): Response
     {
         return new Response(
-            '<html><body>Hello symfony adasdad</body></html>'
+            '<html><body>Hello world from symfony</body></html>'
         );
     }
 }
