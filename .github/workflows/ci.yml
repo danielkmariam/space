@@ -2,11 +2,11 @@ name: CI
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [ main, develop]
   pull_request:
-    branches: [ main, develop ]
+    branches: [ develop ]
 jobs:
-  build:
+  compose:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
@@ -50,9 +50,9 @@ jobs:
         configuration: phpstan.neon
         memory_limit: 256M
 
-  cd:
+  build:
     runs-on: ubuntu-latest
-    needs: [build, test]
+    needs: [build, test, analyse]
     steps:
     - uses: actions/checkout@v2
     - name: Install dependencies
