@@ -2,12 +2,13 @@ name: CI
 
 on:
   push:
-    branches: [ main, develop]
+    branches: [ main]
   pull_request:
     branches: [ develop ]
 jobs:
   compose:
     runs-on: ubuntu-latest
+
     steps:
     - uses: actions/checkout@v2
 
@@ -28,10 +29,13 @@ jobs:
 
   test:
     runs-on: ubuntu-latest
+
     steps:
     - uses: actions/checkout@v2
+
     - name: Install dependencies
       run: composer install --prefer-dist --no-progress
+
     - name: PHPUnit tests
       uses: php-actions/phpunit@v3
       with:
@@ -56,7 +60,9 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
+
     needs: [compose, test, analyse]
+
     steps:
     - uses: actions/checkout@v2
 
@@ -67,17 +73,17 @@ jobs:
       uses: docker/login-action@v1
       with:
         username: ${{ secrets.DOCKER_USERNAME }}
-        password: ${{ secrets.DOCKER_PASSWORD }}
+        password: ${{ secrets.DOCKER_TOKEN }}
 
-    - name: Build
+    - name: Docker build
       run: docker build -t space .
 
-    - name: Tags
+    - name: Docker tag
       run: |
         docker tag space ${{ secrets.DOCKER_USERNAME }}/space:${GITHUB_SHA::12}
         docker tag space ${{ secrets.DOCKER_USERNAME }}/space:latest
 
-    - name: Push
+    - name: Docker push
       run: |
         docker push ${{ secrets.DOCKER_USERNAME }}/space:${GITHUB_SHA::12}
         docker push ${{ secrets.DOCKER_USERNAME }}/space:latest
