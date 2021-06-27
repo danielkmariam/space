@@ -8,15 +8,11 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v2
-
     - name: Validate composer.json and composer.lock
       run: composer validate --strict
-
     - name: Cache Composer packages
       id: composer-cache
       uses: actions/cache@v2
@@ -29,33 +25,28 @@ jobs:
     - name: Install dependencies
       run: composer install --prefer-dist --no-progress
   
-  tests:
-
+  test:
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v2
-
     - name: Install dependencies
       run: composer install --prefer-dist --no-progress
-
     - name: PHPUnit tests
       uses: php-actions/phpunit@v3
       with:
         configuration: phpunit.xml.dist
         memory_limit: 256M
-  phpstan:
 
+  analyse:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-
     - name: Install dependencies
       run: composer install --prefer-dist --no-progress
-
     - name: Static analysis
       uses: php-actions/phpstan@v2
       with:
-        command: analyse src tests 
+        command: analyse
+        path: src/
         configuration: phpstan.neon
         memory_limit: 256M
