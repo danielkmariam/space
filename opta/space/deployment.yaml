@@ -1,0 +1,75 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deployment
+  namespace: opta
+  labels:
+    name: deployment
+spec:
+  replicas: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 2
+  selector:
+    matchLabels:
+      name: templated-pod
+  template:
+    metadata:
+      name: deployment-template
+      labels:
+        name: templated-pod
+    spec:
+      volumes:
+        - name: nginx-config-volume
+          configMap:
+            name: nginx-config
+
+      # initContainers:
+      #   - name: shared-code
+      #     image: org/custom-laravel-service:x.y.z
+      #     command: [sh, -c]
+      #     args: ['cp -r /var/www/html/* /data && chown www-data:www-data -R /var/www/html']
+      #     imagePullPolicy: Always
+      #     volumeMounts:
+      #       - mountPath: /data
+      #         name: shared-code
+      #     resources:
+      #       requests:
+      #         cpu: 100m
+      #         memory: 64Mi
+      #       limits:
+      #         cpu: 1000m
+      #         memory: 256Mi
+
+      containers:
+        # PHP-FPM 
+        - image: danielkmariam/space:0.1.3
+          imagePullPolicy: IfNotPresent
+          name: app
+          resources:
+            limits:
+              cpu: 100m
+            requests:
+              cpu: 50m
+
+        # NGINX
+        - image: nginx:alpine
+          name: nginx
+          volumeMounts:
+            - name: nginx-config-volume
+              mountPath: /etc/nginx/nginx.conf
+              subPath: nginx.conf
+          
+            # - name: shared-code
+            #   mountPath: /var/www/html
+            #   readOnly: true
+          resources:
+            limits:
+              cpu: 100m
+            requests:
+              cpu: 50m
+
+          ports:
+          - containerPort: 80
