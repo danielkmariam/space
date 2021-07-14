@@ -1,47 +1,51 @@
-FROM php:fpm-alpine3.13 as base
-# docker pull php:fpm-alpine3.13
+# Install php dependencies
+FROM php:7-fpm AS base
+
+RUN apt update \
+    && apt install -y zlib1g-dev libpng-dev git zip \
+    && docker-php-ext-install exif gd pdo_mysql
+
+# Dev image
+FROM base AS dev
+
+RUN apt update && apt install -y vim nodejs npm
+COPY --from=composer /usr/bin/composer /usr/bin/composer
+
+# Install composer dependencies
+FROM base AS build-fpm-composer
 
 WORKDIR /var/www/html
 
-# Use the default production configuration
-RUN cp "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-# Install dependencies
-RUN set -xe \
-    && apk add --no-cache bash icu-dev \
-    && docker-php-ext-install pdo pdo_mysql intl pcntl
-
-CMD ["php-fpm"]
-
-
-FROM composer:latest as composer
-
-RUN rm -rf /var/www/html && mkdir /var/www/html
-WORKDIR /var/www/html
-
-COPY composer.* /var/www/html/
-
-ARG APP_ENV=prod
-
-RUN set -xe \
-    && if [ "$APP_ENV" = "prod" ]; then export ARGS="--no-dev"; fi \
-    && composer install --prefer-dist --no-scripts --no-progress --no-suggest --no-interaction $ARGS
+COPY ./composer.json /var/www/html/composer.json
+RUN composer install --no-dev --no-scripts --no-autoloader
 
 COPY . /var/www/html
+RUN composer install --no-dev \
+    && composer dump-autoload -o
 
-RUN composer dump-autoload --classmap-authoritative
+# Build production image
+FROM base AS build-fpm
 
+WORKDIR /var/www/html
+COPY --from=build-fpm-composer /var/www/html /var/www/html
 
-FROM base as phpfpm
+# Build test image
+FROM build-fpm AS test
 
-ARG APP_ENV=prod
-ARG APP_DEBUG=0
+RUN make test
 
-ENV APP_ENV $APP_ENV
-ENV APP_DEBUG $APP_DEBUG
+# # Build asset image
+# FROM node:10 AS assets-build
 
-COPY --from=composer /var/www/html/ /var/www/html/
+# WORKDIR /code
+# COPY . /code/
+# RUN npm ci
+# RUN npm run production
 
-# Memory limit increase is required by the dev image
-RUN php -d memory_limit=256M bin/console cache:clear
-RUN bin/console assets:install
+# Build nginx
+FROM nginx AS nginx
+
+COPY docker/nginx/default.conf /etc/nginx/conf.d/default.conf
+# COPY --from=assets-build /code/public /var/www/html/
