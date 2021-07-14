@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: service-loadbalancer
-  namespace: opta  
+  namespace: space  
 spec:
   selector:
     name: templated-pod
