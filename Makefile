@@ -29,17 +29,17 @@ help: ##@other Show this help.
 	@perl -e '$(HELP_FUN)' $(MAKEFILE_LIST)
 
 create-ns: ## Create namespace
-	kubectl apply -f opta/namespaces/
+	kubectl apply -f opt/namespaces/
 
 delete-ns: ## Delete namespace
-	kubectl delete -f opta/namespaces/
+	kubectl delete -f opt/namespaces/
 
 deploy: ## Deploy to k8
-	kubectl apply -f opta/space/deployment.yaml
-	kubectl apply -f opta/space/configMap.yaml
-	kubectl apply -f opta/space/service.yaml
+	kubectl apply -f opt/space/deployment.yaml
+	kubectl apply -f opt/space/configMap.yaml
+	kubectl apply -f opt/space/service.yaml
 
 delete: ## Delete deployment
-	kubectl delete -f opta/space/service.yaml
-	kubectl delete -f opta/space/configMap.yaml
-	kubectl delete -f opta/space/deployment.yaml
+	kubectl delete -f opt/space/service.yaml
+	kubectl delete -f opt/space/configMap.yaml
+	kubectl delete -f opt/space/deployment.yaml
