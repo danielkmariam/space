@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: trading-api
+  namespace: trading-api
+  labels:
+    tier: backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: trading-api
+      tier: backend
+  template:
+    metadata:
+      labels:
+        app: trading-api
+        tier: backend
+    spec:
+      containers:
+        - name: trading-api-nginx
+          image: danielkmariam/trading-sample-nginx:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - name: trading-api-code
+              mountPath: /var/www/html
+
+        - name: trading-api-fpm
+          image: danielkmariam/trading-sample-fpm:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 9000
+      # imagePullSecrets:
+      #   - name: registry-secret
+      volumes: 
+        - name: trading-api-code
+          persistentVolumeClaim:
+            claimName: trading-api-pv

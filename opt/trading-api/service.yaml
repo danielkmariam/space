@@ -1,10 +1,12 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: my-service
+  name: trading-api
+  namespace: trading-api
 spec:
   selector:
-    app: pingcrm
+    app: trading-api
+    tier: backend
   ports:
     - protocol: TCP
       port: 80

@@ -55,6 +55,6 @@ RUN bin/phpunit test
 # Build nginx
 #------------
 
-FROM nginx AS nginx
+FROM nginx AS build-nginx
 
 COPY docker/nginx/default.conf /etc/nginx/conf.d/default.conf

@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: trading-api
+  namespace: trading-api  
+  labels:
+    app: trading-api
+    tier: backend
+spec:
+  storageClassName: standard
+  capacity:
+    storage: 2Gi
+  selector:
+  accessModes:
+    - ReadWriteOnce
+  claimRef:
+    namespace: trading-api
+    name: trading-api-pv
+  hostPath:
+    path: "/var/www/html"

@@ -34,12 +34,12 @@ create-ns: ## Create namespace
 delete-ns: ## Delete namespace
 	kubectl delete -f opt/namespaces/
 
-deploy: ## Deploy to k8
-	kubectl apply -f opt/space/deployment.yaml
-	kubectl apply -f opt/space/configMap.yaml
-	kubectl apply -f opt/space/service.yaml
+deploy: create-ns  ## Deploy to k8
+	kubectl apply -f opt/trading-api/deployment.yaml
+	kubectl apply -f opt/trading-api/service.yaml
+    # kubectl apply -f opt/trading-api/persistane-volume-claim.yaml
 
 delete: ## Delete deployment
-	kubectl delete -f opt/space/service.yaml
-	kubectl delete -f opt/space/configMap.yaml
-	kubectl delete -f opt/space/deployment.yaml
+	kubectl delete -f opt/trading-api/service.yaml
+	kubectl delete -f opt/trading-api/deployment.yaml
+    # kubectl delete -f opt/trading-api/persistane-volume-claim.yaml
