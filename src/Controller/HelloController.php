@@ -17,7 +17,7 @@ class HelloController extends AbstractController
     public function index(): Response
     {
         return new Response(
-            '<html><body>Hello world from symfony 5.3 in Kind Cluster</body></html>'
+            '<html><body><h1>Hello world from symfony 5.3 deployed in Azure Cluster<h1></body></html>'
         );
     }
 }
